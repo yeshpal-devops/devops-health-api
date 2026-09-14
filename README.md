@@ -1,45 +1,77 @@
 # ⚡ DevOps Health API
 
 <p align="center">
-  <strong>A production-style mini DevOps project demonstrating containerization, automated testing, CI/CD quality gates and container security.</strong>
+  <strong>Production-style Python service demonstrating containerization, automated testing, CI quality gates and container security.</strong>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
+  <img src="https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.12"/>
   <img src="https://img.shields.io/badge/Flask-3.1-000000?style=for-the-badge&logo=flask&logoColor=white" alt="Flask"/>
   <img src="https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker"/>
-  <img src="https://img.shields.io/badge/GitHub_Actions-CI%2FCD-2088FF?style=for-the-badge&logo=githubactions&logoColor=white" alt="GitHub Actions"/>
+  <img src="https://img.shields.io/badge/GitHub_Actions-CI-2088FF?style=for-the-badge&logo=githubactions&logoColor=white" alt="GitHub Actions"/>
   <img src="https://img.shields.io/badge/Trivy-Security-1904DA?style=for-the-badge&logo=aqua&logoColor=white" alt="Trivy"/>
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License"/>
+</p>
+
+<p align="center">
+  <a href="https://github.com/yeshpal-devops/devops-health-api/actions/workflows/ci.yml"><img src="https://github.com/yeshpal-devops/devops-health-api/actions/workflows/ci.yml/badge.svg" alt="CI"/></a>
+  <img src="https://img.shields.io/github/last-commit/yeshpal-devops/devops-health-api?style=flat-square" alt="Last commit"/>
+  <img src="https://img.shields.io/github/repo-size/yeshpal-devops/devops-health-api?style=flat-square" alt="Repo size"/>
 </p>
 
 ## 🎯 Project Overview
 
-`devops-health-api` is a small cloud-ready HTTP service designed to showcase a practical DevOps delivery workflow without unnecessary application complexity.
+`devops-health-api` is intentionally small so the engineering focus stays on **DevOps practices rather than application complexity**.
 
-The project demonstrates:
+It demonstrates a practical delivery path:
 
-- Application health and readiness-style endpoints
-- Automated unit testing with `pytest`
+**Code → Test → Build → Scan → Run**
+
+### What this project demonstrates
+
+- REST API health endpoints
+- Automated testing with Pytest
 - Reproducible Docker image builds
 - Non-root container execution
 - Docker Compose for local operations
-- GitHub Actions CI pipeline
-- Container vulnerability scanning with Trivy
-- Path-based workflow execution to keep CI efficient
+- GitHub Actions CI
+- Trivy vulnerability scanning
+- Least-privilege CI permissions
+- Container health checks
 
 ## 🏗️ Architecture
 
 ```mermaid
 graph LR
-    Dev[Developer] --> Git[GitHub]
-    Git --> CI[GitHub Actions]
-    CI --> Test[Pytest]
-    Test --> Build[Docker Build]
-    Build --> Scan[Trivy Scan]
-    Scan --> Ready[Validated Image]
-    Ready --> Run[Container / Compose]
-    Run --> Health[/health]
+    A[Developer] --> B[Git Push / Pull Request]
+    B --> C[GitHub Actions]
+    C --> D[Pytest]
+    D --> E[Docker Build]
+    E --> F[Trivy Scan]
+    F --> G[Validated Image]
+    G --> H[Docker Compose / Runtime]
+    H --> I[/health]
 ```
+
+## 🔄 CI Pipeline
+
+```text
+Checkout
+   ↓
+Python 3.12
+   ↓
+Install dependencies
+   ↓
+Run Pytest
+   ↓
+Build Docker image
+   ↓
+Scan HIGH / CRITICAL vulnerabilities
+   ↓
+CI result
+```
+
+The workflow is path-aware, so CI executes when project files change. The repository uses read-only `contents` permissions by default.
 
 ## 📁 Repository Structure
 
@@ -53,6 +85,9 @@ graph LR
 ├── requirements.txt
 ├── Dockerfile
 ├── docker-compose.yml
+├── .dockerignore
+├── .gitignore
+├── LICENSE
 └── README.md
 ```
 
@@ -84,7 +119,7 @@ Open:
 docker compose up --build
 ```
 
-Stop it with:
+Stop:
 
 ```bash
 docker compose down
@@ -96,64 +131,83 @@ docker compose down
 pytest -q
 ```
 
-## 🔄 CI/CD Workflow
+The test suite validates both the service metadata endpoint and the health endpoint.
 
-Every push or pull request affecting this project triggers:
+## 📡 API Reference
 
-```text
-Checkout
-   ↓
-Python 3.12 setup
-   ↓
-Dependency installation
-   ↓
-Pytest
-   ↓
-Docker image build
-   ↓
-Trivy HIGH/CRITICAL vulnerability scan
-   ↓
-Pipeline result
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/` | Service metadata |
+| `GET` | `/health` | Health status + UTC timestamp |
+
+Example health response:
+
+```json
+{
+  "status": "healthy",
+  "timestamp": "2026-09-14T12:00:00+00:00"
+}
 ```
 
-The workflow uses least-privilege GitHub Actions permissions.
-
-## 🔐 Security Practices
+## 🔐 Security Controls
 
 | Control | Implementation |
 |---|---|
-| Non-root container | Dedicated UID `10001` |
-| Dependency pinning | `requirements.txt` versions are pinned |
-| Image scanning | Trivy scans HIGH/CRITICAL vulnerabilities |
-| CI permissions | Read-only contents by default |
-| Automated tests | Pytest quality gate |
-| Health check | Docker Compose healthcheck |
+| Non-root runtime | Container runs as UID `10001` |
+| Dependency pinning | Explicit package versions |
+| Image scanning | Trivy HIGH/CRITICAL gate |
+| CI permissions | Least privilege by default |
+| Secret hygiene | No application secrets stored in source |
+| Runtime health | Docker healthcheck against `/health` |
 
-## 📊 Endpoints
+## 🧰 Technology Stack
 
-| Endpoint | Purpose |
+| Area | Technology |
 |---|---|
-| `GET /` | Service information |
-| `GET /health` | Health status + UTC timestamp |
+| Application | Python 3.12, Flask |
+| Testing | Pytest |
+| Containers | Docker, Docker Compose |
+| CI/CD | GitHub Actions |
+| Security | Trivy |
+| Runtime | Linux container |
 
-## 💼 DevOps Skills Demonstrated
+## 💼 Portfolio Value
 
-**CI/CD** · GitHub Actions · Docker · Docker Compose · Python · Linux containers · Automated testing · Security scanning · Health checks · Git workflows · Infrastructure-ready application design
+This project is designed to show practical understanding of:
 
-## 🛣️ Next Improvements
+- CI/CD pipeline design
+- Docker image lifecycle
+- Linux container fundamentals
+- Automated quality gates
+- Container security
+- Git workflows
+- Operational health checks
+- Production-minded repository structure
 
-- Terraform deployment to Azure Container Apps
+## 🛣️ Roadmap
+
+Planned extensions for a larger cloud DevSecOps implementation:
+
+- Terraform-managed Azure infrastructure
 - Azure Container Registry
-- OIDC-based GitHub → Azure authentication
-- Azure Monitor / Application Insights
-- Prometheus metrics
+- Azure Container Apps deployment
+- GitHub OIDC → Azure authentication
+- Azure Key Vault integration
+- Checkov IaC security scanning
+- SonarQube quality gates
+- SBOM generation
 - Dev → QA → Prod promotion
 - Deployment approvals and rollback
-- SBOM generation and artifact signing
+- Azure Monitor / Application Insights
+- Prometheus metrics
+
+## 👤 Author
+
+**Yesh Pal** — DevOps / Cloud Engineer  
+GitHub: [@yeshpal-devops](https://github.com/yeshpal-devops)
 
 ---
 
 <p align="center">
-  <strong>Built as a compact DevOps portfolio project by Yesh Pal.</strong><br/>
-  <sub>Build → Test → Scan → Ship</sub>
+  <strong>Build → Test → Scan → Ship</strong>
 </p>
