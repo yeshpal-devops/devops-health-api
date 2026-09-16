@@ -1,16 +1,26 @@
 # Security Policy
 
-## Supported scope
+## Scope
 
-This repository is a portfolio/demo project. Please report suspected security issues responsibly rather than publishing exploit details in an issue.
+This repository is a public portfolio/demo project. Security improvements and responsible disclosure are welcome.
 
-## Reporting
+## Reporting a vulnerability
 
-Open a private security advisory through GitHub when available. Include:
+Please use a GitHub private security advisory when available rather than publishing exploit details in a public issue.
 
-- affected component/file
+Include:
+
+- affected component or file
 - reproduction steps
-- impact assessment
+- security impact
 - suggested mitigation, if known
 
-Do not include passwords, API keys, access tokens or other secrets in reports.
+Never include passwords, API keys, tokens, private keys, or other secrets in a report.
+
+## Security practices in this project
+
+- Dependencies are pinned in `requirements.txt`.
+- The Docker image runs as a non-root user.
+- Compose enables a read-only filesystem, capability dropping, and `no-new-privileges`.
+- Trivy can be used to scan the built image for vulnerabilities.
+- No application credentials should be committed to the repository.
