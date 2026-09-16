@@ -2,26 +2,40 @@
 
 Thanks for contributing to **DevOps Health API**.
 
-## Development flow
+## Development workflow
 
 1. Create a feature branch from `main`.
-2. Make a focused change.
-3. Run the test suite locally:
+2. Keep changes focused and documented.
+3. Create and activate a virtual environment.
+4. Install dependencies:
 
 ```bash
-pytest -q
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 ```
 
-4. Build and run the container:
+5. Run tests:
+
+```bash
+python -m pytest -q
+```
+
+6. Build and run locally:
 
 ```bash
 docker compose up --build
 ```
 
-5. Open a pull request with a clear summary and testing notes.
+7. Open a pull request with a concise summary, validation steps, and any security considerations.
 
-## Pull requests
+## Repository standards
 
-Keep changes small and production-minded. Avoid committing secrets, local environment files, generated artifacts, or credentials.
+- Do not commit credentials, API keys, certificates, `.env` files, virtual environments, or generated artifacts.
+- Prefer small, reviewable changes.
+- Keep dependency versions explicit and review upgrades before merging.
+- Preserve the non-root and hardened container runtime unless there is a documented reason to change it.
 
-CI automatically validates tests, builds the Docker image and runs a Trivy HIGH/CRITICAL vulnerability scan.
+## Continuous integration
+
+The repository keeps CI configuration available for **manual execution only**. Automatic push and pull-request runs are intentionally disabled for this portfolio repository.
